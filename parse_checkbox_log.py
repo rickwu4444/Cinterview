@@ -27,10 +27,13 @@ def ParseLog (filepath, filename):
     LogFile.close()
     print('Parse log done...\n''Please check \"'+ filename + '.report\" for detail.')
 
+
 def UnzipSub (filepath, filename):
     print('Unzipping ' + filename + '.....')
     subprocess.run('tar -xvJf ' + filepath + '/' + filename, shell=True,)
     print('Unzip Done .....')
+
+
 def ClearSub (filepath):
     subprocess.run('rm ' + filepath + 'submission.json', shell=True)
     subprocess.run('rm ' + filepath + 'submission.junit', shell=True)
@@ -40,7 +43,7 @@ def ClearSub (filepath):
     subprocess.run('rm -rf ' + filepath + 'attachment_files', shell=True)
 
 
-
+### Main ###
 WhoAmI = subprocess.run('whoami', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
 FilePath = '/home/' + WhoAmI + '/.local/share/checkbox-ng/'
 SubStr = subprocess.run('ls ' + FilePath + '*.xz', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip() #find all submission log file
@@ -71,12 +74,3 @@ else:
 
 
 
-#filename = filepath.split('/')[-1].split('.tar')[0]
-
-
-'''
-for cnt in range(len(data['results'])):
-    if data['results'][cnt]['status'] == "skip":
-    print(data['results'][cnt]['status'])
-'''
-    
