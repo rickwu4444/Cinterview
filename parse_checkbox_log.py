@@ -12,7 +12,6 @@ def ParseLog (whoami, filename):
     print('Start parse JSON for ' + filename + ' .....')
     with open('/home/' + whoami + '/tmp/submission.json') as file:
         data = json.load(file)
-    LogFile = open('/home/'+ whoami + '/' + filename + '.report','a')
     for key in data['results']:
         if key['status'] == 'skip':
             skip+=1
@@ -21,14 +20,14 @@ def ParseLog (whoami, filename):
         else:
             fail+=1
         duration = duration + key['duration']
-    print("Version tested: "+data['distribution']['description'], file = LogFile)
-    print('Number of tests run: ' + str(skip+pas+fail), file = LogFile)
-    print('Outcome:', file = LogFile)
-    print(' -skip: ' + str(skip) + ' (' + str(int(round(skip/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
-    print(' -fail: ' + str(fail) + ' (' + str(int(round(fail/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
-    print(' -pass: ' + str(pas) + ' (' + str(int(round(pas/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
-    print('Total run duration: ' + str(int(round(duration,0))) + ' seconds', file = LogFile)
-    LogFile.close()
+    with open('/home/'+ whoami + '/' + filename + '.report','a') as LogFile:
+        print("Version tested: "+data['distribution']['description'], file = LogFile)
+        print('Number of tests run: ' + str(skip+pas+fail), file = LogFile)
+        print('Outcome:', file = LogFile)
+        print(' -skip: ' + str(skip) + ' (' + str(int(round(skip/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
+        print(' -fail: ' + str(fail) + ' (' + str(int(round(fail/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
+        print(' -pass: ' + str(pas) + ' (' + str(int(round(pas/(skip+pas+fail),2)*100)) + '%)', file = LogFile)
+        print('Total run duration: ' + str(int(round(duration,0))) + ' seconds', file = LogFile)
     print('Parse log done...\n''Please check '+ filename + '.report for detail.')
 
 
@@ -57,12 +56,7 @@ else:
         print(str(key) + ' : ' + SubDict[key])
     print('Any other key for all of above')
     SelectSub = input('Select one to parse log: ')
-    if SelectSub.isdigit() != True:
-        for key in SubDict.keys():
-            UnzipSub(FilePath, SubDict[key])
-            ParseLog(WhoAmI, SubDict[key])
-            ClearSub()
-    elif int(SelectSub) in SubDict.keys():
+    if SelectSub in SubDict.keys():
         UnzipSub(FilePath, SubDict[int(SelectSub)])
         ParseLog(WhoAmI, SubDict[int(SelectSub)])
         ClearSub()
@@ -71,6 +65,5 @@ else:
             UnzipSub(FilePath, SubDict[key])
             ParseLog(WhoAmI, SubDict[key])
             ClearSub()
-
 
 
