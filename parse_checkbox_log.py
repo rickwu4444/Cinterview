@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #coding=utf-8
 #Python3
 #By Rick Wu 20200927
@@ -42,28 +43,33 @@ def ClearSub ():
     subprocess.run('rm -rf ~/tmp', shell=True)
 
 
-### Main ###
-WhoAmI = subprocess.run('whoami', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
-FilePath = '/home/' + WhoAmI + '/.local/share/checkbox-ng/'
-SubStr = subprocess.run('ls ' + FilePath + '*.xz', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip() #find all submission log file
-if len(re.findall("No such file",SubStr)) != 0 :
-    print('Did not find Submission folder!')
-else:
-    SubList = re.findall(r'(?:[\w\s.-]+[a-z]+\_\d+\-\d+\-\w+(?:\.\w+)+)',SubStr) #find submisson file name from path and turn into a list
-    SubDict = {x+1:SubList[x] for x in range(len(SubList))} #turn submission file name list into dict
-    print('================== Submission List ===================')
-    for key in SubDict.keys():
-        print(str(key) + ' : ' + SubDict[key])
-    print('Any other key for all of above')
-    SelectSub = input('Select one to parse log: ')
-    if SelectSub in SubDict.keys():
-        UnzipSub(FilePath, SubDict[int(SelectSub)])
-        ParseLog(WhoAmI, SubDict[int(SelectSub)])
-        ClearSub()
+
+
+
+if __name__ == "__main__":
+    FilePath = input("Please input your submissions file path. e.g. /home/username/.local/share/checkbox-ng/ :")
+    if FilePath == "":
+        WhoAmI = subprocess.run('whoami', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
+        FilePath = '/home/' + WhoAmI + '/.local/share/checkbox-ng/'
+    SubStr = subprocess.run('ls ' + FilePath + '*.xz', shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8').strip() #find all submission log file
+    if SubStr == "":
+        print('Did not find Submission files!')    
+    elif len(re.findall('submission',SubStr)) == 0 :
+        print('Did not find Submission files!')
     else:
+        SubList = re.findall(r'(?:[\w\s.-]+[a-z]+\_\d+\-\d+\-\w+(?:\.\w+)+)',SubStr) #find submisson file name from path and turn into a list
+        SubDict = {x+1:SubList[x] for x in range(len(SubList))} #turn submission file name list into dict
+        print('================== Submission List ===================')
         for key in SubDict.keys():
-            UnzipSub(FilePath, SubDict[key])
-            ParseLog(WhoAmI, SubDict[key])
+            print(str(key) + ' : ' + SubDict[key])
+        print('Any other key for all of above')
+        SelectSub = input('Select one to parse log: ')
+        if SelectSub in SubDict.keys():
+            UnzipSub(FilePath, SubDict[int(SelectSub)])
+            ParseLog(WhoAmI, SubDict[int(SelectSub)])
             ClearSub()
-
-
+        else:
+            for key in SubDict.keys():
+                UnzipSub(FilePath, SubDict[key])
+                ParseLog(WhoAmI, SubDict[key])
+                ClearSub()
